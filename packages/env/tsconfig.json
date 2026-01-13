@@ -1,0 +1,3 @@
+{
+  "extends": "@videocore-app/config/tsconfig.base.json"
+}
