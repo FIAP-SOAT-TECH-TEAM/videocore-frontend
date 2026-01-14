@@ -1,24 +1,24 @@
 {
-  "name": "@videocore-app/env",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "biome lint ."
-  },
-  "exports": {
-    "./server": "./src/server.ts",
-    "./web": "./src/web.ts"
-  },
-  "dependencies": {
-    "@t3-oss/env-core": "^0.13.1",
-    "@t3-oss/env-nextjs": "^0.13.1",
-    "dotenv": "^17.2.2",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@types/node": "^22.13.14",
-    "@videocore-app/config": "*",
-    "typescript": "^5"
-  }
+	"name": "@videocore/env",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"lint": "biome format --write ."
+	},
+	"exports": {
+		"./server": "./src/server.ts",
+		"./web": "./src/web.ts"
+	},
+	"dependencies": {
+		"@t3-oss/env-core": "^0.13.1",
+		"@t3-oss/env-nextjs": "^0.13.1",
+		"dotenv": "^17.2.2",
+		"zod": "^4.1.13"
+	},
+	"devDependencies": {
+		"@types/node": "^22.13.14",
+		"@videocore-app/config": "*",
+		"typescript": "^5"
+	}
 }

@@ -1,31 +1,31 @@
 {
-  "name": "videocore-app",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "type": "module",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev",
-    "check": "biome check --write .",
-    "lint": "turbo lint"
-  },
-  "dependencies": {
-    "@videocore-app/env": "*",
-    "dotenv": "^17.2.2",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
-    "@types/node": "^22.13.14",
-    "@videocore-app/config": "*",
-    "turbo": "^2.6.3",
-    "typescript": "^5"
-  },
-  "packageManager": "npm@11.6.2"
+    "name": "@videocore/code",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "type": "module",
+    "scripts": {
+        "dev": "turbo dev",
+        "build": "turbo build",
+        "check-types": "turbo check-types",
+        "dev:native": "turbo -F native dev",
+        "dev:web": "turbo -F web dev",
+        "check": "biome check --write .",
+        "lint": "turbo lint"
+    },
+    "dependencies": {
+        "@videocore-app/env": "*",
+        "dotenv": "^17.2.2",
+        "zod": "^4.1.13"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.2.0",
+        "@types/node": "^22.13.14",
+        "@videocore-app/config": "*",
+        "turbo": "^2.6.3",
+        "typescript": "^5"
+    },
+    "packageManager": "npm@11.6.2"
 }

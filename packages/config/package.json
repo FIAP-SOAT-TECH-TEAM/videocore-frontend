@@ -1,8 +1,8 @@
 {
-  "name": "@videocore-app/config",
+  "name": "@videocore/config",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "lint": "biome lint ."
+    "lint": "biome format --write ."
   }
 }
