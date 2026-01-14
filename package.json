@@ -12,7 +12,8 @@
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "lint": "turbo lint"
   },
   "dependencies": {
     "@videocore-app/env": "*",
