@@ -41,9 +41,7 @@ export const useAuthStore = create<AuthStore>()(
 							const user: User = {
 								id: attrs.sub,
 								email: attrs.email,
-								name: attrs.name || attrs.preferred_username || email.split("@")[0],
-								cpf: attrs["custom:cpf"],
-								role: attrs["custom:role"],
+								name: attrs.name || attrs.preferred_username || email.split("@")[0]
 							};
 
 							set({
@@ -101,9 +99,7 @@ export const useAuthStore = create<AuthStore>()(
 							user: {
 								id: attrs.sub,
 								email: attrs.email,
-								name: attrs.name || attrs.preferred_username || attrs.email.split("@")[0],
-								cpf: attrs["custom:cpf"],
-								role: attrs["custom:role"],
+								name: attrs.name || attrs.preferred_username || attrs.email.split("@")[0]
 							},
 							isAuthenticated: true,
 						});

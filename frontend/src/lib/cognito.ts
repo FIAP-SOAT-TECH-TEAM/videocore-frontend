@@ -99,8 +99,6 @@ export interface CognitoUserAttributes {
 	email: string;
 	name?: string;
 	preferred_username?: string;
-	"custom:cpf"?: string;
-	"custom:role"?: string;
 }
 
 export async function getUserAttributes(): Promise<CognitoUserAttributes | null> {
@@ -114,9 +112,7 @@ export async function getUserAttributes(): Promise<CognitoUserAttributes | null>
 			sub: payload.sub as string,
 			email: payload.email as string,
 			name: (payload.name as string) || (payload.preferred_username as string),
-			preferred_username: payload.preferred_username as string,
-			"custom:cpf": payload["custom:cpf"] as string | undefined,
-			"custom:role": payload["custom:role"] as string | undefined,
+			preferred_username: payload.preferred_username as string
 		};
 	} catch {
 		return null;
