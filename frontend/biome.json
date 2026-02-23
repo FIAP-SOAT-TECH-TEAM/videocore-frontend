@@ -1,0 +1,220 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
+	},
+
+	"files": {
+		"ignoreUnknown": true,
+		"includes": [
+			"**",
+			"!**/.next",
+			"!**/dist",
+			"!**/node_modules",
+			"!**/.vscode",
+			"!**/.alchemy",
+			"!**/public",
+			"!src/components/ui"
+		]
+	},
+
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 100,
+		"lineEnding": "lf"
+	},
+
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+
+	"linter": {
+		"enabled": true,
+
+		"domains": {
+			"next": "recommended",
+			"react": "recommended"
+		},
+
+		"rules": {
+			"recommended": true,
+
+			"a11y": {
+				"recommended": true,
+				"noAccessKey": "warn",
+				"noAriaHiddenOnFocusable": "error",
+				"useAltText": "error",
+				"useAnchorContent": "error",
+				"useButtonType": "error",
+				"useHeadingContent": "error",
+				"useHtmlLang": "error",
+				"useIframeTitle": "error",
+				"useKeyWithClickEvents": "warn",
+				"useKeyWithMouseEvents": "warn",
+				"useValidAnchor": "error",
+				"useValidAriaValues": "error"
+			},
+
+			"complexity": {
+				"recommended": true,
+				"noExtraBooleanCast": "error",
+				"noForEach": "warn",
+				"noUselessCatch": "error",
+				"noUselessConstructor": "warn",
+				"noUselessFragments": "warn",
+				"noUselessRename": "error",
+				"noUselessTernary": "error",
+				"useArrowFunction": "warn",
+				"useFlatMap": "warn",
+				"useLiteralKeys": "error",
+				"useOptionalChain": "error",
+				"useSimplifiedLogicExpression": "warn"
+			},
+
+			"correctness": {
+				"recommended": true,
+				"noConstAssign": "error",
+				"noPrecisionLoss": "error",
+				"noSelfAssign": "error",
+				"noUnusedImports": "warn",
+				"noUnusedVariables": "warn",
+
+				"useExhaustiveDependencies": "warn",
+				"useIsNan": "error"
+			},
+
+			"nursery": {
+				"useSortedClasses": {
+					"level": "warn",
+					"fix": "safe",
+					"options": {
+						"functions": ["clsx", "cva", "cn"]
+					}
+				}
+			},
+
+			"performance": {
+				"recommended": true,
+				"noAccumulatingSpread": "warn",
+				"noBarrelFile": "off",
+				"noDelete": "warn",
+				"noReExportAll": "off"
+			},
+
+			"security": {
+				"noDangerouslySetInnerHtml": "warn",
+				"noGlobalEval": "error"
+			},
+
+			"style": {
+				"recommended": true,
+				"noDefaultExport": "off",
+				"noImplicitBoolean": "warn",
+				"noInferrableTypes": "error",
+				"noNonNullAssertion": "warn",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"useAsConstAssertion": "error",
+				"useCollapsedElseIf": "warn",
+				"useConsistentArrayType": {
+					"level": "warn",
+					"fix": "safe",
+					"options": { "syntax": "shorthand" }
+				},
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useExponentiationOperator": "warn",
+				"useForOf": "warn",
+				"useFragmentSyntax": "warn",
+				"useImportType": "warn",
+				"useNodejsImportProtocol": "error",
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error",
+				"useTemplate": "warn"
+			},
+
+			"suspicious": {
+				"recommended": true,
+				"noArrayIndexKey": "warn",
+				"noConsole": "warn",
+				"noEmptyBlockStatements": "warn",
+				"noExplicitAny": "warn",
+				"noFallthroughSwitchClause": "error",
+				"noMisleadingCharacterClass": "error",
+				"noPrototypeBuiltins": "error",
+				"noShadowRestrictedNames": "error"
+			}
+		}
+	},
+
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"jsxQuoteStyle": "double",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"trailingCommas": "all"
+		},
+		"globals": ["React"]
+	},
+
+	"css": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"indentWidth": 2,
+			"lineWidth": 100,
+			"quoteStyle": "double"
+		},
+		"linter": { "enabled": true },
+		"parser": { "tailwindDirectives": true }
+	},
+
+	"overrides": [
+		{
+			"includes": [
+				"*.config.ts",
+				"*.config.js",
+				"*.config.mjs",
+				"src/app/**/page.tsx",
+				"src/app/**/layout.tsx",
+				"src/app/**/loading.tsx",
+				"src/app/**/error.tsx",
+				"src/app/**/not-found.tsx",
+				"src/app/**/template.tsx",
+				"src/app/**/global-error.tsx",
+				"src/app/**/route.ts"
+			],
+			"linter": {
+				"rules": {
+					"style": { "noDefaultExport": "off" }
+				}
+			}
+		},
+
+		{
+			"includes": ["src/components/ui/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noImplicitBoolean": "off",
+						"noNonNullAssertion": "off"
+					},
+					"a11y": { "recommended": false }
+				}
+			}
+		}
+	]
+}
