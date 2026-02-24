@@ -3,6 +3,9 @@
 # ===========================================
 # Copie este arquivo como .env e preencha os valores.
 
+# Ambiente (development, staging, prod)
+NEXT_PUBLIC_APP_ENV=
+
 # URL base da API REST (ex: https://your-apim.azure-api.net)
 NEXT_PUBLIC_API_URL=
 

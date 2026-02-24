@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function isDev() : boolean {
-	return process.env.NODE_ENV === "development";
+	return process.env.NEXT_PUBLIC_APP_ENV === "development";
 }
