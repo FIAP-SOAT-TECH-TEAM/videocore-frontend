@@ -13,15 +13,12 @@ import {
 } from "aws-amplify/auth";
 import { env } from "@/env";
 
-const isDev = process.env.NODE_ENV === "development";
-
 Amplify.configure({
 	Auth: {
 		Cognito: {
 			userPoolId: env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
 			userPoolClientId: env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
-			...(isDev &&
-				env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
+			...(env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
 		},
 	},
 });

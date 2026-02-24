@@ -20,10 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import { useReportsStore } from "@/stores";
 import type { ProcessStatus } from "@/types";
-
-interface VideoDetailsPageProps {
-	params: Promise<{ id: string }>;
-}
+import { useSearchParams } from "next/navigation";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -35,9 +32,9 @@ const statusConfig: Record<
 	FAILED: { label: "Falhou", icon: AlertCircleIcon, color: "text-red-600" },
 };
 
-export default function VideoDetailsPage({ params }: VideoDetailsPageProps) {
-	const resolvedParams = React.use(params);
-	const requestId = resolvedParams.id;
+export default function VideoDetailsPage() {
+	const searchParams = useSearchParams();
+	const requestId = searchParams.get("requestId");
 
 	const reports = useReportsStore((state) => state.reports);
 	const fetchReports = useReportsStore((state) => state.fetchReports);

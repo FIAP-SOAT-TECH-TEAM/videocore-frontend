@@ -174,7 +174,7 @@ export default function DashboardPage() {
 				) : (
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{recentReports.map((report) => (
-							<Link key={report.id} href={`/dashboard/videos/${report.requestId}` as never}>
+							<Link key={report.id} href={`/dashboard/videos/details?requestId=${report.requestId}` as never}>
 								<Card className="overflow-hidden transition-colors hover:bg-muted/50">
 									<CardContent className="p-4">
 										<h3 className="truncate font-medium">{report.videoName}</h3>
