@@ -14,25 +14,27 @@ export async function connectStomp<T>(
 	stompSubscribePath: string,
 	callbacks: WebSocketCallbacks<T>
 ): Promise<Client> {
-	const wsUrl = `${env.NEXT_PUBLIC_WS_URL}`;
+	let wsUrl = `${env.NEXT_PUBLIC_WS_URL}`;
 	let token;
 	let apimKey;
 	let subject;
+	// https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api
+	let secWebSocketProtocolHeaderValue;
 
 	if (isDev()) {
 		subject = await getAuthSubject();
+		secWebSocketProtocolHeaderValue = `${subject}`;
 	}
 	else {
 		apimKey = `${env.NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY}`;
 		token = await getAccessToken();
+		secWebSocketProtocolHeaderValue = `${token}`;
+		wsUrl = `${wsUrl}?subscription-key=${apimKey}`
 	}
 
 	const client = new Client({
-		brokerURL: wsUrl,
-		connectHeaders: {
-			...(token && {"Authorization": token}),
-			...(apimKey && {"Ocp-Apim-Subscription-Key": apimKey}),
-			...(subject && {"Auth-Subject": subject})
+		webSocketFactory: () => {
+			return new WebSocket(wsUrl, secWebSocketProtocolHeaderValue)
 		},
 		reconnectDelay: 5000,
 		heartbeatIncoming: 10000,
