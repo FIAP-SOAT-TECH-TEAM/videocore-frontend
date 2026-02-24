@@ -1,78 +1,61 @@
 import { Client, type IMessage } from "@stomp/stompjs";
 import { env } from "@/env";
-import type { ReportPayload } from "@/types";
+import { getAccessToken, getAuthSubject } from "./cognito";
 
-let stompClient: Client | null = null;
+const isDev = process.env.NODE_ENV === "development";
 
-export interface WebSocketCallbacks {
-	onReportUpdate: (payload: ReportPayload) => void;
-	onConnect?: () => void;
+export interface WebSocketCallbacks<T> {
+	onPublish: (payload: T) => void;
+	onConnection?: () => void;
 	onDisconnect?: () => void;
 	onError?: (error: string) => void;
 }
 
-export function connectWebSocket(
-	userId: string,
-	authSubject: string,
-	callbacks: WebSocketCallbacks,
-): Client {
-	disconnectWebSocket();
+export async function connectStomp<T>(
+	stompSubscribePath: string,
+	callbacks: WebSocketCallbacks<T>
+): Promise<Client> {
+	const wsUrl = `${env.NEXT_PUBLIC_WS_URL}`;
+	let token;
+	let apimKey;
+	let subject;
 
-	const wsUrl = `${env.NEXT_PUBLIC_WS_URL}?Auth-Subject=${encodeURIComponent(authSubject)}`;
+	if (isDev) {
+		subject = await getAuthSubject();
+	}
+	else {
+		apimKey = `${env.NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY}`;
+		token = await getAccessToken();
+	}
 
 	const client = new Client({
 		brokerURL: wsUrl,
 		connectHeaders: {
-			"Auth-Subject": authSubject,
+			...(token && {"Authorization": token}),
+			...(apimKey && {"Ocp-Apim-Subscription-Key": apimKey}),
+			...(subject && {"Auth-Subject": subject})
 		},
 		reconnectDelay: 5000,
 		heartbeatIncoming: 10000,
 		heartbeatOutgoing: 10000,
 
 		onConnect: () => {
-			// [WebSocket] Conectado ao STOMP broker
-			callbacks.onConnect?.();
+			callbacks.onConnection?.();
 
-			client.subscribe(`/topic/${userId}`, (message: IMessage) => {
+			client.subscribe(stompSubscribePath, (message: IMessage) => {
 				try {
-					const payload: ReportPayload = JSON.parse(message.body);
-					callbacks.onReportUpdate(payload);
-				} catch (_error) {
-					// [WebSocket] Erro ao processar mensagem
+					const payload = JSON.parse(message.body) as T;
+					callbacks.onPublish(payload);
+				} catch {
+					callbacks.onError?.("Payload STOMP inválido");
 				}
 			});
 		},
-
-		onDisconnect: () => {
-			// [WebSocket] Desconectado
-			callbacks.onDisconnect?.();
-		},
-
-		onStompError: (frame) => {
-			// [WebSocket] STOMP error
-			callbacks.onError?.(frame.headers.message || "Erro na conexão WebSocket");
-		},
-
-		onWebSocketError: (_event) => {
-			// [WebSocket] WebSocket error
-			callbacks.onError?.("Erro na conexão WebSocket");
-		},
+		onStompError: (frame) => callbacks.onError?.(frame.headers.message ?? "Erro STOMP"),
+		onWebSocketClose: () => callbacks.onDisconnect?.(),
+		onWebSocketError: () =>  callbacks.onError?.("Erro WebSocket")
 	});
 
 	client.activate();
-	stompClient = client;
-
 	return client;
-}
-
-export function disconnectWebSocket(): void {
-	if (stompClient?.active) {
-		stompClient.deactivate();
-		// [WebSocket] Desconectado manualmente
-	}
-	stompClient = null;
-}
-
-export function isWebSocketConnected(): boolean {
-	return stompClient?.active ?? false;
 }

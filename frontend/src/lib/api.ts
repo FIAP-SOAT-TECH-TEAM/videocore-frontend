@@ -3,25 +3,24 @@ import type { Report, VideoImagesDownloadUrlResponse, VideoUploadUrlResponse } f
 import { getAccessToken, getAuthSubject } from "./cognito";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
+const isDev = process.env.NODE_ENV === "development";
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
 	};
 
-	const [token, subject] = await Promise.all([getAccessToken(), getAuthSubject()]);
-
-	if (token) {
-		headers.Authorization = `Bearer ${token}`;
+	if (isDev) {
+		const subject = await getAuthSubject();
+		
+		(subject && (headers["Auth-Subject"] = `${subject}`));
 	}
-	if (subject) {
-		headers["Auth-Subject"] = subject;
-	}
+	else {
+		const apimKey = `${env.NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY}`;
+		const token = await getAccessToken();
 
-	const apimKey = env.NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY;
-
-	if (apimKey) {
-		headers["Ocp-Apim-Subscription-Key"] = apimKey;
+		(token && (headers.Authorization = `Bearer ${token}`));
+		(apimKey && (headers["Ocp-Apim-Subscription-Key"] = apimKey));
 	}
 
 	return headers;
