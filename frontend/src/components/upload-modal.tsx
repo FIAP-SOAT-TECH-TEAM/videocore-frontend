@@ -170,7 +170,9 @@ export function UploadModal({ children }: UploadModalProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DialogTrigger nativeButton={false} render={<span />}>{children}</DialogTrigger>
+			<DialogTrigger nativeButton={false} render={<span />}>
+				{children}
+			</DialogTrigger>
 			<DialogContent className="sm:max-w-2xl" showCloseButton={!isUploading}>
 				<DialogHeader>
 					<DialogTitle className="text-lg">Upload de Vídeo</DialogTitle>

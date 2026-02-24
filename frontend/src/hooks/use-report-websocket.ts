@@ -11,9 +11,7 @@ import type { ReportPayload } from "@/types";
 export function useReportWebSocket() {
 	const user = useAuthStore((state) => state.user);
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-	const updateReportFromWebSocket = useReportsStore(
-		(state) => state.updateReportFromWebSocket
-	);
+	const updateReportFromWebSocket = useReportsStore((state) => state.updateReportFromWebSocket);
 	const clientRef = useRef<Client | null>(null);
 
 	useEffect(() => {
@@ -23,7 +21,7 @@ export function useReportWebSocket() {
 			if (!(isAuthenticated && user?.id)) {
 				clientRef.current?.deactivate();
 				clientRef.current = null;
-				
+
 				return;
 			}
 
@@ -46,7 +44,7 @@ export function useReportWebSocket() {
 							description: "O vídeo começou a ser processado.",
 						});
 					}
-				}
+				},
 			});
 
 			if (!cancelled) {

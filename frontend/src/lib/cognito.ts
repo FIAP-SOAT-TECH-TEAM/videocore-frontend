@@ -20,7 +20,8 @@ Amplify.configure({
 		Cognito: {
 			userPoolId: env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
 			userPoolClientId: env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
-			...(isDev() && env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
+			...(isDev() &&
+				env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
 		},
 	},
 });
@@ -111,7 +112,7 @@ export async function getUserAttributes(): Promise<CognitoUserAttributes | null>
 			sub: payload.sub as string,
 			email: payload.email as string,
 			name: (payload.name as string) || (payload.preferred_username as string),
-			preferred_username: payload.preferred_username as string
+			preferred_username: payload.preferred_username as string,
 		};
 	} catch {
 		return null;

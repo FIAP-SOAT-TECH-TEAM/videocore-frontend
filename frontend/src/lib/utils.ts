@@ -5,6 +5,6 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function isDev() : boolean {
+export function isDev(): boolean {
 	return process.env.NEXT_PUBLIC_APP_ENV === "development";
 }
