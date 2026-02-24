@@ -1,8 +1,7 @@
 import { Client, type IMessage } from "@stomp/stompjs";
 import { env } from "@/env";
 import { getAccessToken, getAuthSubject } from "./cognito";
-
-const isDev = process.env.NODE_ENV === "development";
+import { isDev } from "./utils";
 
 export interface WebSocketCallbacks<T> {
 	onPublish: (payload: T) => void;
@@ -20,7 +19,7 @@ export async function connectStomp<T>(
 	let apimKey;
 	let subject;
 
-	if (isDev) {
+	if (isDev()) {
 		subject = await getAuthSubject();
 	}
 	else {

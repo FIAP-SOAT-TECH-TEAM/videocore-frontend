@@ -1,16 +1,16 @@
 import { env } from "@/env";
 import type { Report, VideoImagesDownloadUrlResponse, VideoUploadUrlResponse } from "@/types";
 import { getAccessToken, getAuthSubject } from "./cognito";
+import { isDev } from "./utils";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
-const isDev = process.env.NODE_ENV === "development";
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
 	};
 
-	if (isDev) {
+	if (isDev()) {
 		const subject = await getAuthSubject();
 		
 		(subject && (headers["Auth-Subject"] = `${subject}`));

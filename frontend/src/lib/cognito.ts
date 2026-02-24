@@ -1,4 +1,6 @@
 import { Amplify } from "aws-amplify";
+import { isDev } from "./utils";
+
 import {
 	type ConfirmSignUpOutput,
 	confirmSignUp,
@@ -18,7 +20,7 @@ Amplify.configure({
 		Cognito: {
 			userPoolId: env.NEXT_PUBLIC_COGNITO_USER_POOL_ID,
 			userPoolClientId: env.NEXT_PUBLIC_COGNITO_CLIENT_ID,
-			...(env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
+			...(isDev() && env.NEXT_PUBLIC_COGNITO_ENDPOINT && { userPoolEndpoint: env.NEXT_PUBLIC_COGNITO_ENDPOINT }),
 		},
 	},
 });
