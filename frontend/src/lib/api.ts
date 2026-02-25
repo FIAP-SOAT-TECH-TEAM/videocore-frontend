@@ -52,6 +52,13 @@ export async function fetchLatestReports(): Promise<Report[]> {
 }
 
 /**
+ * GET /{reportId} — Retorna um reporte do usuário autenticado pelo ID
+ */
+export async function fetchReportById(id: string): Promise<Report> {
+	return apiFetch<Report>(`/${id}`);
+}
+
+/**
  * GET /video/download/url?requestId=...&videoName=... — Retorna a SAS URL de download do ZIP de imagens
  */
 export async function fetchVideoImagesDownloadUrl(

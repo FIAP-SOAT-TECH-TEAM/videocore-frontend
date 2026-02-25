@@ -54,7 +54,7 @@ function ActionsCell({ report }: { report: Report }) {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
-					onClick={() => (window.location.href = `/dashboard/videos/details?requestId=${report.requestId}`)}
+					onClick={() => (window.location.href = `/dashboard/videos/details?id=${report.id}`)}
 				>
 					<HugeiconsIcon icon={Eye} className="mr-2 h-4 w-4" />
 					Ver detalhes

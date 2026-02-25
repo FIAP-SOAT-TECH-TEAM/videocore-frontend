@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { fetchLatestReports } from "@/lib/api";
+import { fetchReportById } from "@/lib/api";
 import type { ProcessStatus, Report, ReportPayload } from "@/types";
 
 interface ReportsState {
@@ -18,6 +19,7 @@ interface ReportsActions {
 		processing: number;
 		failed: number;
 	};
+	fetchReportById: (id: string) => Promise<void>;
 }
 
 type ReportsStore = ReportsState & ReportsActions;
@@ -87,5 +89,25 @@ export const useReportsStore = create<ReportsStore>()((set, get) => ({
 			processing: reports.filter((r) => r.status === "PROCESSING" || r.status === "STARTED").length,
 			failed: reports.filter((r) => r.status === "FAILED").length,
 		};
+	},
+
+	fetchReportById: async (id: string) => {
+		set({ isLoading: true, error: null });
+		try {
+			const report = await fetchReportById(id);
+			set((state) => {
+				const existingIndex = state.reports.findIndex((r) => r.id === report.id);
+				let updatedReports = [...state.reports];
+				if (existingIndex >= 0) {
+					updatedReports[existingIndex] = report;
+				} else {
+					updatedReports = [report, ...updatedReports];
+				}
+				return { reports: updatedReports, isLoading: false };
+			});
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Erro ao buscar report";
+			set({ error: message, isLoading: false });
+		}
 	},
 }));

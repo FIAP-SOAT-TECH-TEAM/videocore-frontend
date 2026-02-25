@@ -34,21 +34,21 @@ const statusConfig: Record<
 
 export default function VideoDetailsPage() {
 	const searchParams = useSearchParams();
-	const requestId = searchParams.get("requestId");
+	const id = `${searchParams.get("id")}`;
 
 	const reports = useReportsStore((state) => state.reports);
-	const fetchReports = useReportsStore((state) => state.fetchReports);
+	const fetchReportById = useReportsStore((state) => state.fetchReportById);
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const [isDownloading, setIsDownloading] = React.useState(false);
 
 	// Buscar reports se não carregados
 	React.useEffect(() => {
 		if (reports.length === 0) {
-			fetchReports();
+			fetchReportById(id);
 		}
-	}, [reports.length, fetchReports]);
+	}, [reports.length, fetchReportById]);
 
-	const report = reports.find((r) => r.requestId === requestId);
+	const report = reports.find((r) => r.id === id);
 
 	if (isLoading && reports.length === 0) {
 		return (
