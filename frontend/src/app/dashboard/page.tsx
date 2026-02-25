@@ -177,7 +177,14 @@ export default function DashboardPage() {
 							<Link key={report.id} href={`/dashboard/videos/details?id=${report.id}` as never}>
 								<Card className="overflow-hidden transition-colors hover:bg-muted/50">
 									<CardContent className="p-4">
-										<h3 className="truncate font-medium">{report.videoName}</h3>
+										<div className="flex items-center gap-2"> 
+											<span className="max-w-[150px] truncate font-medium">
+												{report.videoName}
+											</span>
+											<Badge variant="outline" className="text-xs shrink-0">
+												{report.requestId.slice(0, 8)}...
+											</Badge>
+										</div>
 										<div className="mt-2 flex items-center justify-between text-sm">
 											<span className="text-muted-foreground">
 												{new Date(report.reportTime).toLocaleDateString("pt-BR")}

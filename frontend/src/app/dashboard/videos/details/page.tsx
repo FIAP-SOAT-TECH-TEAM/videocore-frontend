@@ -6,21 +6,27 @@ import {
 	Calendar01Icon,
 	CheckmarkCircle01Icon,
 	Download01Icon,
+	InformationCircleIcon,
 	Loading01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import * as React from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import { useReportsStore } from "@/stores";
-import type { ProcessStatus } from "@/types";
 import { useSearchParams } from "next/navigation";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip"
+import type { ProcessStatus } from "@/types";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -171,7 +177,26 @@ export default function VideoDetailsPage() {
 
 				<Card>
 					<CardHeader className="pb-2">
-						<CardTitle className="font-medium text-sm">Configuração</CardTitle>
+						<div className="flex items-center justify-between">
+							<CardTitle className="font-medium text-sm">Configuração</CardTitle>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger render={
+										<button className="flex items-center justify-center rounded-full hover:bg-accent p-1 transition-colors">
+										<HugeiconsIcon 
+											icon={InformationCircleIcon} 
+											className="h-5 w-5 text-muted-foreground"
+										/>
+										</button>
+									}>
+										
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Utilize essas informações ao contatar nosso suporte</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+						</div>	
 					</CardHeader>
 					<CardContent>
 						<p className="text-muted-foreground text-sm">
