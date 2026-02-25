@@ -2,7 +2,7 @@
 
 import { Download01Icon, Eye, MoreHorizontal } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import type { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import * as React from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import type { ProcessStatus, Report } from "@/types";
+import type { ColumnDef } from "@tanstack/react-table";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -53,9 +54,7 @@ function ActionsCell({ report }: { report: Report }) {
 				<HugeiconsIcon icon={MoreHorizontal} className="h-4 w-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem
-					onClick={() => (window.location.href = `/dashboard/videos/details?id=${report.id}`)}
-				>
+				<DropdownMenuItem render={<Link href={`/dashboard/videos/details?id=${report.id}`}/>}>
 					<HugeiconsIcon icon={Eye} className="mr-2 h-4 w-4" />
 					Ver detalhes
 				</DropdownMenuItem>
