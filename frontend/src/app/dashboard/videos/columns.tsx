@@ -97,8 +97,16 @@ export const columns: ColumnDef<Report>[] = [
 		cell: ({ row }) => {
 			const report = row.original;
 			return (
-				<div className="flex flex-col">
-					<span className="max-w-50 truncate font-medium">{report.videoName}</span>
+				<div className="flex flex-col gap-1">
+					<div className="flex items-center gap-2"> 
+						<span className="max-w-[150px] truncate font-medium">
+							{report.videoName}
+						</span>
+						<Badge variant="outline" className="text-xs shrink-0">
+							{report.requestId.slice(0, 8)}...
+						</Badge>
+					</div>
+					
 					<span className="text-muted-foreground text-xs">
 						Intervalo: {report.frameCutMinutes} min
 					</span>

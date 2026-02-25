@@ -113,9 +113,6 @@ export default function VideoDetailsPage() {
 								<HugeiconsIcon icon={Calendar01Icon} className="h-4 w-4" />
 								{new Date(report.reportTime).toLocaleDateString("pt-BR")}
 							</span>
-							<Badge variant="outline" className="text-xs">
-								{report.requestId.slice(0, 8)}...
-							</Badge>
 						</div>
 					</div>
 				</div>
