@@ -9,7 +9,10 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 export default function VideosPage() {
-	const reports = useReportsStore((state) => state.reports);
+	const reports = useReportsStore((state) => state.reports).sort(
+		(a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime(),
+	);
+
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const error = useReportsStore((state) => state.error);
 	const fetchReports = useReportsStore((state) => state.fetchReports);

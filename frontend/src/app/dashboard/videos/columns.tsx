@@ -17,6 +17,7 @@ import { Progress } from "@/components/ui/progress";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import type { ProcessStatus, Report } from "@/types";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { UrlObject } from "url";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -47,6 +48,14 @@ function ActionsCell({ report }: { report: Report }) {
 		}
 	};
 
+	const seeDetailsUrl: UrlObject = {
+		pathname: "/dashboard/videos/details",
+		query: {
+			requestId: report.requestId,
+			videoName: report.videoName,
+		},
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-muted">
@@ -54,7 +63,7 @@ function ActionsCell({ report }: { report: Report }) {
 				<HugeiconsIcon icon={MoreHorizontal} className="h-4 w-4" />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem render={<Link href={`/dashboard/videos/details?id=${report.id}`}/>}>
+				<DropdownMenuItem render={<Link href={seeDetailsUrl} />}>
 					<HugeiconsIcon icon={Eye} className="mr-2 h-4 w-4" />
 					Ver detalhes
 				</DropdownMenuItem>
@@ -98,15 +107,13 @@ export const columns: ColumnDef<Report>[] = [
 			const report = row.original;
 			return (
 				<div className="flex flex-col gap-1">
-					<div className="flex items-center gap-2"> 
-						<span className="max-w-[150px] truncate font-medium">
-							{report.videoName}
-						</span>
+					<div className="flex items-center gap-2">
+						<span className="max-w-[150px] truncate font-medium">{report.videoName}</span>
 						<Badge variant="outline" className="text-xs shrink-0">
 							{report.requestId.slice(0, 8)}...
 						</Badge>
 					</div>
-					
+
 					<span className="text-muted-foreground text-xs">
 						Intervalo: {report.frameCutMinutes} min
 					</span>

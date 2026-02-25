@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { UploadModal } from "@/components/upload-modal";
 import { useReportsStore } from "@/stores";
 import type { ProcessStatus } from "@/types";
+import type { UrlObject } from "url";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -40,7 +41,9 @@ export default function DashboardPage() {
 	}, [fetchReports]);
 
 	const stats = getDashboardStats();
-	const recentReports = reports.slice(0, 3);
+	const recentReports = reports
+		.sort((a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime())
+		.slice(0, 3);
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -173,38 +176,48 @@ export default function DashboardPage() {
 					</Card>
 				) : (
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{recentReports.map((report) => (
-							<Link key={report.id} href={`/dashboard/videos/details?id=${report.id}` as never}>
-								<Card className="overflow-hidden transition-colors hover:bg-muted/50">
-									<CardContent className="p-4">
-										<div className="flex items-center gap-2"> 
-											<span className="max-w-[150px] truncate font-medium">
-												{report.videoName}
-											</span>
-											<Badge variant="outline" className="text-xs shrink-0">
-												{report.requestId.slice(0, 8)}...
-											</Badge>
-										</div>
-										<div className="mt-2 flex items-center justify-between text-sm">
-											<span className="text-muted-foreground">
-												{new Date(report.reportTime).toLocaleDateString("pt-BR")}
-											</span>
-											<Badge variant={statusConfig[report.status].variant}>
-												{statusConfig[report.status].label}
-											</Badge>
-										</div>
-										{(report.status === "PROCESSING" || report.status === "STARTED") && (
-											<div className="mt-2">
-												<Progress value={report.percentStatusProcess} className="h-1.5" />
-												<p className="mt-1 text-muted-foreground text-xs">
-													{report.percentStatusProcess}%
-												</p>
+						{recentReports.map((report) => {
+							const seeDetailsUrl: UrlObject = {
+								pathname: "/dashboard/videos/details",
+								query: {
+									requestId: report.requestId,
+									videoName: report.videoName,
+								},
+							};
+
+							return (
+								<Link key={report.id} href={seeDetailsUrl}>
+									<Card className="overflow-hidden transition-colors hover:bg-muted/50">
+										<CardContent className="p-4">
+											<div className="flex items-center gap-2">
+												<span className="max-w-[150px] truncate font-medium">
+													{report.videoName}
+												</span>
+												<Badge variant="outline" className="text-xs shrink-0">
+													{report.requestId.slice(0, 8)}...
+												</Badge>
 											</div>
-										)}
-									</CardContent>
-								</Card>
-							</Link>
-						))}
+											<div className="mt-2 flex items-center justify-between text-sm">
+												<span className="text-muted-foreground">
+													{new Date(report.reportTime).toLocaleDateString("pt-BR")}
+												</span>
+												<Badge variant={statusConfig[report.status].variant}>
+													{statusConfig[report.status].label}
+												</Badge>
+											</div>
+											{(report.status === "PROCESSING" || report.status === "STARTED") && (
+												<div className="mt-2">
+													<Progress value={report.percentStatusProcess} className="h-1.5" />
+													<p className="mt-1 text-muted-foreground text-xs">
+														{report.percentStatusProcess}%
+													</p>
+												</div>
+											)}
+										</CardContent>
+									</Card>
+								</Link>
+							);
+						})}
 					</div>
 				)}
 			</div>

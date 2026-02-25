@@ -20,12 +20,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import { useReportsStore } from "@/stores";
 import { useSearchParams } from "next/navigation";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip"
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { ProcessStatus } from "@/types";
 
 const statusConfig: Record<
@@ -40,21 +36,22 @@ const statusConfig: Record<
 
 export default function VideoDetailsPage() {
 	const searchParams = useSearchParams();
-	const id = `${searchParams.get("id")}`;
+	const requestId = searchParams.get("requestId");
+	const videoName = searchParams.get("videoName");
 
 	const reports = useReportsStore((state) => state.reports);
-	const fetchReportById = useReportsStore((state) => state.fetchReportById);
+	const fetchReports = useReportsStore((state) => state.fetchReports);
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const [isDownloading, setIsDownloading] = React.useState(false);
 
-	// Buscar reports se não carregados
+	// Buscar reports se não carregado
 	React.useEffect(() => {
 		if (reports.length === 0) {
-			fetchReportById(id);
+			fetchReports();
 		}
-	}, [reports.length, fetchReportById]);
+	}, [reports.length, fetchReports]);
 
-	const report = reports.find((r) => r.id === id);
+	const report = reports.find((r) => r.requestId === requestId && r.videoName == videoName);
 
 	if (isLoading && reports.length === 0) {
 		return (
@@ -74,7 +71,9 @@ export default function VideoDetailsPage() {
 			<div className="flex flex-col items-center justify-center gap-4 py-24">
 				<HugeiconsIcon icon={AlertCircleIcon} className="h-12 w-12 text-muted-foreground" />
 				<h2 className="font-semibold text-lg">Processamento não encontrado</h2>
-				<p className="text-muted-foreground">Nenhum report encontrado com o ID informado.</p>
+				<p className="text-muted-foreground">
+					Nenhum reporte encontrado com as informações fornecidas.
+				</p>
 				<Link href={"/dashboard/videos" as never}>
 					<Button variant="outline">Voltar para lista</Button>
 				</Link>
@@ -181,22 +180,22 @@ export default function VideoDetailsPage() {
 							<CardTitle className="font-medium text-sm">Configuração</CardTitle>
 							<TooltipProvider>
 								<Tooltip>
-									<TooltipTrigger render={
-										<button className="flex items-center justify-center rounded-full hover:bg-accent p-1 transition-colors">
-										<HugeiconsIcon 
-											icon={InformationCircleIcon} 
-											className="h-5 w-5 text-muted-foreground"
-										/>
-										</button>
-									}>
-										
-									</TooltipTrigger>
+									<TooltipTrigger
+										render={
+											<button className="flex items-center justify-center rounded-full hover:bg-accent p-1 transition-colors">
+												<HugeiconsIcon
+													icon={InformationCircleIcon}
+													className="h-5 w-5 text-muted-foreground"
+												/>
+											</button>
+										}
+									></TooltipTrigger>
 									<TooltipContent>
 										<p>Utilize essas informações ao contatar nosso suporte</p>
 									</TooltipContent>
 								</Tooltip>
 							</TooltipProvider>
-						</div>	
+						</div>
 					</CardHeader>
 					<CardContent>
 						<p className="text-muted-foreground text-sm">
