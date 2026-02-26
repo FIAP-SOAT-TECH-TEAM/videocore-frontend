@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import favicon from "../assets/favicon.png";
 
 import { Geist, Geist_Mono } from "next/font/google";
 
@@ -20,6 +21,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
 	title: "VideoCore",
 	description: "Screenshots de vídeo simplificados",
+	icons: {
+		icon: favicon.src,
+	},
 };
 
 export default function RootLayout({
