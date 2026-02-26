@@ -14,7 +14,7 @@ export async function connectStomp<T>(
 	stompSubscribePath: string,
 	callbacks: WebSocketCallbacks<T>,
 ): Promise<Client> {
-	let wsUrl = `${env.NEXT_PUBLIC_WS_URL}`;
+	let wsUrl = `${env.NEXT_PUBLIC_BASE_WS_URL}/ws/connect`;
 	let token;
 	let apimKey;
 	let subject;

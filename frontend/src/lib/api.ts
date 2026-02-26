@@ -3,7 +3,7 @@ import type { Report, VideoImagesDownloadUrlResponse, VideoUploadUrlResponse } f
 import { getAccessToken, getAuthSubject } from "./cognito";
 import { isDev } from "./utils";
 
-const API_BASE_URL = env.NEXT_PUBLIC_API_URL;
+const API_BASE_URL = env.NEXT_PUBLIC_BASE_API_URL;
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
 	const headers: Record<string, string> = {
