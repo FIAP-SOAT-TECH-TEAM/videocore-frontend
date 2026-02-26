@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { GuestGuard } from "@/components/guest-guard";
-import authCover from "../../assets/auth-cover.png";
+import authCover from "../../assets/auth_cover.png";
 
 export default function AuthLayout({
 	children,
