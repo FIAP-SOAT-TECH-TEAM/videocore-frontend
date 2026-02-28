@@ -3,10 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import faviconImage from "../assets/favicon.png";
 import "../styles/index.css";
+import type { StaticImageData } from "next/dist/shared/lib/image-external";
 import { AppInitializer } from "@/components/app-initializer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import type { StaticImageData } from "next/dist/shared/lib/image-external";
 
 const favicon: StaticImageData = faviconImage;
 
