@@ -81,7 +81,13 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: nextjs-build-${{ github.sha }}
+          name: nextjs-build
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: ci.yaml
+          workflow_search: true
+          check_artifacts: true
+          name_is_regexp: false
+          if_no_artifact_found: fail
           path: out
 
       - name: Azure login
