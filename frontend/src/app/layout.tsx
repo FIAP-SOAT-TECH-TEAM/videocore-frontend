@@ -21,7 +21,9 @@ export const metadata: Metadata = {
 	title: "VideoCore",
 	description: "Screenshots de vídeo simplificados",
 	icons: {
-		icon: favicon.src,
+		icon: {
+			url: favicon.src,
+		}
 	},
 };
 
