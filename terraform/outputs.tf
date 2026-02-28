@@ -4,12 +4,6 @@
     description = "Grupo de recursos para implantação de recursos no Azure"
   }
 
-  output "aws_credentials_from_remote" {
-    value       = data.terraform_remote_state.infra.outputs.aws_credentials
-    description = "Credenciais da AWS"
-    sensitive   = true
-  }
-
 # APIM
   output "api_public_url_from_remote" {
     value       = data.terraform_remote_state.infra.outputs.apim_gateway_url
