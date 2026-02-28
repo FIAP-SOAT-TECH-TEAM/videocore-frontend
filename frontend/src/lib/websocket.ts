@@ -15,11 +15,11 @@ export async function connectStomp<T>(
 	callbacks: WebSocketCallbacks<T>,
 ): Promise<Client> {
 	let wsUrl = `${env.NEXT_PUBLIC_BASE_WS_URL}/ws/connect`;
-	let token;
-	let apimKey;
-	let subject;
+	let token: string | undefined;
+	let apimKey: string;
+	let subject: string | undefined;
 	// https://stackoverflow.com/questions/4361173/http-headers-in-websockets-client-api
-	let secWebSocketProtocolCustomValue;
+	let secWebSocketProtocolCustomValue: string;
 
 	if (isDev()) {
 		subject = await getAuthSubject();
@@ -33,7 +33,7 @@ export async function connectStomp<T>(
 
 	const client = new Client({
 		webSocketFactory: () => {
-			let subProtocols = ["v10.stomp", "v11.stomp", "v12.stomp", secWebSocketProtocolCustomValue];
+			const subProtocols = ["v10.stomp", "v11.stomp", "v12.stomp", secWebSocketProtocolCustomValue];
 			return new WebSocket(wsUrl, subProtocols);
 		},
 		reconnectDelay: 5000,

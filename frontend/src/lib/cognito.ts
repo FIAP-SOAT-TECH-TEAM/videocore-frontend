@@ -1,6 +1,4 @@
 import { Amplify } from "aws-amplify";
-import { isDev } from "./utils";
-
 import {
 	type ConfirmSignUpOutput,
 	confirmSignUp,
@@ -14,6 +12,7 @@ import {
 	signUp,
 } from "aws-amplify/auth";
 import { env } from "@/env";
+import { isDev } from "./utils";
 
 Amplify.configure({
 	Auth: {

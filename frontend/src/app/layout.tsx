@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import favicon from "../assets/favicon.png";
-
 import { Geist, Geist_Mono } from "next/font/google";
 
+import favicon from "../assets/favicon.png";
 import "../styles/index.css";
 import { AppInitializer } from "@/components/app-initializer";
 import { ThemeProvider } from "@/components/theme-provider";

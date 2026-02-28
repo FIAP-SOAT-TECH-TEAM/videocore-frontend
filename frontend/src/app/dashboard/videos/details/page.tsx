@@ -11,17 +11,17 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import { useReportsStore } from "@/stores";
-import { useSearchParams } from "next/navigation";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { ProcessStatus } from "@/types";
 
 const statusConfig: Record<
@@ -51,7 +51,7 @@ export default function VideoDetailsPage() {
 		}
 	}, [reports.length, fetchReports]);
 
-	const report = reports.find((r) => r.requestId === requestId && r.videoName == videoName);
+	const report = reports.find((r) => r.requestId === requestId && r.videoName === videoName);
 
 	if (isLoading && reports.length === 0) {
 		return (
@@ -182,14 +182,17 @@ export default function VideoDetailsPage() {
 								<Tooltip>
 									<TooltipTrigger
 										render={
-											<button className="flex items-center justify-center rounded-full hover:bg-accent p-1 transition-colors">
+											<button
+												type="button"
+												className="flex items-center justify-center rounded-full p-1 transition-colors hover:bg-accent"
+											>
 												<HugeiconsIcon
 													icon={InformationCircleIcon}
 													className="h-5 w-5 text-muted-foreground"
 												/>
 											</button>
 										}
-									></TooltipTrigger>
+									/>
 									<TooltipContent>
 										<p>Utilize essas informações ao contatar nosso suporte</p>
 									</TooltipContent>

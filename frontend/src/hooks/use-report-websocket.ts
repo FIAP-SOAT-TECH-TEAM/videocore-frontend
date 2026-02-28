@@ -27,7 +27,7 @@ export function useReportWebSocket() {
 
 			if (clientRef.current) return;
 
-			const client = await connectStomp<ReportPayload>(`/topic`, {
+			const client = await connectStomp<ReportPayload>("/topic", {
 				onPublish: (payload) => {
 					updateReportFromWebSocket(payload);
 

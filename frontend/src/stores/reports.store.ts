@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { fetchLatestReports } from "@/lib/api";
-import { fetchReportById } from "@/lib/api";
+import { fetchLatestReports, fetchReportById } from "@/lib/api";
 import type { ProcessStatus, Report, ReportPayload } from "@/types";
 
 interface ReportsState {

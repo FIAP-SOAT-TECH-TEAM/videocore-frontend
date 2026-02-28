@@ -1,5 +1,6 @@
 "use client";
 
+import type { UrlObject } from "node:url";
 import {
 	AlertCircleIcon,
 	CheckmarkCircle01Icon,
@@ -17,7 +18,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { UploadModal } from "@/components/upload-modal";
 import { useReportsStore } from "@/stores";
 import type { ProcessStatus } from "@/types";
-import type { UrlObject } from "url";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -193,7 +193,7 @@ export default function DashboardPage() {
 												<span className="max-w-[150px] truncate font-medium">
 													{report.videoName}
 												</span>
-												<Badge variant="outline" className="text-xs shrink-0">
+												<Badge variant="outline" className="shrink-0 text-xs">
 													{report.requestId.slice(0, 8)}...
 												</Badge>
 											</div>

@@ -13,13 +13,14 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
 	if (isDev()) {
 		const subject = await getAuthSubject();
 
-		subject && (headers["Auth-Subject"] = `${subject}`);
+		headers["Auth-Subject"] = subject ? `${subject}` : headers["Auth-Subject"];
 	} else {
 		const apimKey = `${env.NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY}`;
 		const token = await getAccessToken();
 
-		token && (headers.Authorization = `Bearer ${token}`);
-		apimKey && (headers["Ocp-Apim-Subscription-Key"] = apimKey);
+		headers.Authorization = token ? `Bearer ${token}` : headers.Authorization;
+
+		headers["Ocp-Apim-Subscription-Key"] = apimKey ? apimKey : headers["Ocp-Apim-Subscription-Key"];
 	}
 
 	return headers;

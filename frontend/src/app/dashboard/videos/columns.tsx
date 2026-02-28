@@ -1,7 +1,9 @@
 "use client";
 
+import type { UrlObject } from "node:url";
 import { Download01Icon, Eye, MoreHorizontal } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import * as React from "react";
 import { toast } from "sonner";
@@ -16,8 +18,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { fetchVideoImagesDownloadUrl } from "@/lib/api";
 import type { ProcessStatus, Report } from "@/types";
-import type { ColumnDef } from "@tanstack/react-table";
-import type { UrlObject } from "url";
 
 const statusConfig: Record<
 	ProcessStatus,
@@ -109,7 +109,7 @@ export const columns: ColumnDef<Report>[] = [
 				<div className="flex flex-col gap-1">
 					<div className="flex items-center gap-2">
 						<span className="max-w-[150px] truncate font-medium">{report.videoName}</span>
-						<Badge variant="outline" className="text-xs shrink-0">
+						<Badge variant="outline" className="shrink-0 text-xs">
 							{report.requestId.slice(0, 8)}...
 						</Badge>
 					</div>
