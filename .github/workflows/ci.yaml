@@ -61,7 +61,7 @@ jobs:
         working-directory: terraform
         run: terraform apply --refresh-only --auto-approve
 
-      - name: Get ACR Login Server from remote state
+      - name: Define outputs
         id: acr
         working-directory: terraform
         run: | 
@@ -80,7 +80,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: ./frontend/package-lock.json
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -99,7 +99,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: ./frontend/package-lock.json
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -118,7 +118,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: ./frontend/package-lock.json
+          node-version: 22
           cache: npm
 
       - name: Install dependencies

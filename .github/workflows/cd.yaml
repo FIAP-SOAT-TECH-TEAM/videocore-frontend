@@ -59,7 +59,7 @@ jobs:
         working-directory: terraform
         run: terraform apply --refresh-only --auto-approve
 
-      - name: Get ACR Login Server from remote state
+      - name: Define outputs
         id: acr
         working-directory: terraform
         run: | 
