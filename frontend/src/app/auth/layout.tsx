@@ -15,13 +15,14 @@ export default function AuthLayout({
 						<div className="w-full max-w-xs">{children}</div>
 					</div>
 				</div>
-				<div className="relative hidden bg-muted lg:block">
+				<div className="hidden lg:flex items-center justify-center">
 					<Image
 						src={authCover}
 						width={1024}
 						height={1024}
 						alt="Auth image cover"
-						className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+						className="max-w-full max-h-full object-contain"
+						sizes="(max-width: 1024px) 100vw, 50vw"
 					/>
 				</div>
 			</div>
