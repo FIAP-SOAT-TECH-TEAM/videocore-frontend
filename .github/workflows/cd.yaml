@@ -98,9 +98,16 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Configure AWS CLI
+        env:
+          AWS_CREDS: ${{ needs.infra-info.outputs.aws_credentials }}
         run: |
+          echo "::add-mask::$AWS_CREDS"
+          
           mkdir -p ~/.aws
-          echo "${{ needs.infra-info.outputs.aws_credentials }}" > ~/.aws/credentials
+          
+          cat <<EOF > ~/.aws/credentials
+          $AWS_CREDS
+          EOF
 
       - name: Upload to Blob Storage
         run: |
