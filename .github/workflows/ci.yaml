@@ -128,8 +128,8 @@ jobs:
         env:
           NEXT_PUBLIC_APP_ENV: prod
           NEXT_TELEMETRY_DISABLED: 1
-          NEXT_PUBLIC_BASE_API_URL: ${{ needs.infra-info.outputs.api_public_url }}
-          NEXT_PUBLIC_BASE_WS_URL: ${{ needs.infra-info.outputs.api_ws_public_url }}
+          NEXT_PUBLIC_BASE_API_URL: ${{ needs.infra-info.outputs.api_public_url }}/reports
+          NEXT_PUBLIC_BASE_WS_URL: ${{ needs.infra-info.outputs.api_ws_public_url }}/reports
           NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY: ${{ needs.infra-info.outputs.api_subscription_key }}
           NEXT_PUBLIC_COGNITO_USER_POOL_ID: ${{ needs.infra-info.outputs.cognito_user_pool_id }}
           NEXT_PUBLIC_COGNITO_CLIENT_ID: ${{ needs.infra-info.outputs.cognito_user_pool_client_id }}
