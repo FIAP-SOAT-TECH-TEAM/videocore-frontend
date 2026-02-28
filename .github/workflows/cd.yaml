@@ -26,7 +26,6 @@ jobs:
       storage_account_name: ${{ steps.acr.outputs.storage_account_name }}
       resource_group_name: ${{ steps.acr.outputs.resource_group_name }}
       cloudfront_distribution_id: ${{ steps.acr.outputs.cloudfront_distribution_id }}
-      aws_credentials: ${{ steps.acr.outputs.aws_credentials }}
 
     steps:
       - name: Checkout repo
@@ -66,7 +65,6 @@ jobs:
           echo "storage_account_name=$(terraform output -raw storage_account_name_from_remote)" >> $GITHUB_OUTPUT
           echo "resource_group_name=$(terraform output -raw resource_group_name_from_remote)" >> $GITHUB_OUTPUT
           echo "cloudfront_distribution_id=$(terraform output -raw cloudfront_distribution_id_from_remote)" >> $GITHUB_OUTPUT
-          echo "aws_credentials=$(terraform output -raw aws_credentials_from_remote)" >> $GITHUB_OUTPUT
           
   deploy:
     if: github.event.pull_request.merged == true
@@ -98,16 +96,10 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Configure AWS CLI
-        env:
-          AWS_CREDS: ${{ needs.infra-info.outputs.aws_credentials }}
         run: |
-          echo "::add-mask::$AWS_CREDS"
-          
           mkdir -p ~/.aws
-          
-          cat <<EOF > ~/.aws/credentials
-          $AWS_CREDS
-          EOF
+          echo "${{ secrets.AWS_CREDENTIALS }}" > ~/.aws/credentials
+          aws configure
 
       - name: Upload to Blob Storage
         run: |
