@@ -4,6 +4,12 @@
     description = "Grupo de recursos para implantação de recursos no Azure"
   }
 
+  output "aws_credentials_from_remote" {
+    value       = data.terraform_remote_state.infra.outputs.aws_credentials
+    description = "Credenciais da AWS"
+    sensitive   = true
+  }
+
 # APIM
   output "api_public_url_from_remote" {
     value       = data.terraform_remote_state.infra.outputs.apim_gateway_url
@@ -43,18 +49,8 @@
     description = "Nome da conta de armazenamento para publicação dos arquivos estáticos da aplicação"
   }
 
-# Front Door
-  output "frontdoor_profile_name_from_remote" {
-    value       =  data.terraform_remote_state.infra.outputs.frontdoor_profile_name
-    description = "Nome do Profile utilizado no Front Door"
-  }
-
-  output "frontdoor_endpoint_name_from_remote" {
-    value       =  data.terraform_remote_state.infra.outputs.frontdoor_endpoint_name
-    description = "Nome do Endpoint utilizado no Front Door"
-  }
-
-  output "frontdoor_endpoint_hostname_from_remote" {
-    value       =  data.terraform_remote_state.infra.outputs.frontdoor_endpoint_hostname
-    description = "Hostname do Endpoint utilizado no Front Door"
+# Cloud Front
+  output "cloudfront_distribution_id_from_remote" {
+    value       =  data.terraform_remote_state.infra.outputs.cloudfront_distribution_id
+    description = "ID da distribuição CloudFront para invalidação do cache após publicação de novos arquivos estáticos da aplicação"
   }

@@ -25,9 +25,8 @@ jobs:
     outputs:
       storage_account_name: ${{ steps.acr.outputs.storage_account_name }}
       resource_group_name: ${{ steps.acr.outputs.resource_group_name }}
-      frontdoor_profile_name: ${{ steps.acr.outputs.frontdoor_profile_name }}
-      frontdoor_endpoint_name: ${{ steps.acr.outputs.frontdoor_endpoint_name }}
-      frontdoor_endpoint_hostname: ${{ steps.acr.outputs.frontdoor_endpoint_hostname }}
+      cloudfront_distribution_id: ${{ steps.acr.outputs.cloudfront_distribution_id }}
+      aws_credentials: ${{ steps.acr.outputs.aws_credentials }}
 
     steps:
       - name: Checkout repo
@@ -66,9 +65,8 @@ jobs:
         run: | 
           echo "storage_account_name=$(terraform output -raw storage_account_name_from_remote)" >> $GITHUB_OUTPUT
           echo "resource_group_name=$(terraform output -raw resource_group_name_from_remote)" >> $GITHUB_OUTPUT
-          echo "frontdoor_profile_name=$(terraform output -raw frontdoor_profile_name_from_remote)" >> $GITHUB_OUTPUT
-          echo "frontdoor_endpoint_name=$(terraform output -raw frontdoor_endpoint_name_from_remote)" >> $GITHUB_OUTPUT
-          echo "frontdoor_endpoint_hostname=$(terraform output -raw frontdoor_endpoint_hostname_from_remote)" >> $GITHUB_OUTPUT
+          echo "cloudfront_distribution_id=$(terraform output -raw cloudfront_distribution_id_from_remote)" >> $GITHUB_OUTPUT
+          echo "aws_credentials=$(terraform output -raw aws_credentials_from_remote)" >> $GITHUB_OUTPUT
           
   deploy:
     if: github.event.pull_request.merged == true
@@ -93,6 +91,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Configure AWS CLI
+        run: |
+          mkdir -p ~/.aws
+          echo "${{ needs.infra-info.outputs.aws_credentials }}" > ~/.aws/credentials
+
       - name: Upload to Blob Storage
         run: |
           az storage blob sync \
@@ -102,11 +105,8 @@ jobs:
             --auth-mode login \
             --delete-destination true
 
-      - name: Purge Azure Front Door cache
+      - name: Purge Cloud Front cache
         run: |
-          az afd endpoint purge \
-            --resource-group ${{ needs.infra-info.outputs.resource_group_name }} \
-            --profile-name ${{ needs.infra-info.outputs.frontdoor_profile_name }} \
-            --endpoint-name ${{ needs.infra-info.outputs.frontdoor_endpoint_name }} \
-            --domains ${{ needs.infra-info.outputs.frontdoor_endpoint_hostname }} \
-            --content-paths '/*'
+          aws cloudfront create-invalidation \
+          --distribution-id ${{ needs.infra-info.outputs.cloudfront_distribution_id }} \
+          --paths "/*"
