@@ -1,0 +1,143 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+  TF_VAR_subscription_id: ${{secrets.AZURE_SUBSCRIPTION_ID}}
+  TF_VAR_videocore-backend-resource-group: ${{secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME}}
+  TF_VAR_videocore-backend-storage-account: ${{secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}
+  TF_VAR_videocore-backend-container: ${{secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}
+  TF_VAR_videocore-backend-infra-key: ${{secrets.VIDEOCORE_INFRA_BACKEND_AZURE_KEY}}
+
+jobs:
+  infra-info:
+    runs-on: ubuntu-latest
+    outputs:
+      api_public_url: ${{ steps.acr.outputs.api_public_url }}
+      api_ws_public_url: ${{ steps.acr.outputs.api_ws_public_url }}
+      api_subscription_key: ${{ steps.acr.outputs.api_subscription_key }}
+      cognito_user_pool_id: ${{ steps.acr.outputs.cognito_user_pool_id }}
+      cognito_user_pool_client_id: ${{ steps.acr.outputs.cognito_user_pool_client_id }}
+      cognito_region: ${{ steps.acr.outputs.cognito_region }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Login Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME}}" \
+            -backend-config="storage_account_name=${{secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}" \
+            -backend-config="container_name=${{secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}" \
+            -backend-config="subscription_id=${{secrets.AZURE_SUBSCRIPTION_ID}}" \
+            -backend-config="key=${{secrets.BACKEND_AZURE_KEY}}"
+
+      # Somente para que o output seja criado
+      - name: Terraform Apply Refresh Only
+        working-directory: terraform
+        run: terraform apply --refresh-only --auto-approve
+
+      - name: Define outputs
+        id: acr
+        working-directory: terraform
+        run: | 
+          echo "api_public_url=$(terraform output -raw api_public_url_from_remote)" >> $GITHUB_OUTPUT
+          echo "api_ws_public_url=$(terraform output -raw api_ws_public_url_from_remote)" >> $GITHUB_OUTPUT
+          echo "api_subscription_key=$(terraform output -raw api_subscription_key_from_remote)" >> $GITHUB_OUTPUT
+          echo "cognito_user_pool_id=$(terraform output -raw cognito_user_pool_id_from_remote)" >> $GITHUB_OUTPUT
+          echo "cognito_user_pool_client_id=$(terraform output -raw cognito_user_pool_client_id_from_remote)" >> $GITHUB_OUTPUT
+          echo "cognito_region=$(terraform output -raw cognito_region_from_remote)" >> $GITHUB_OUTPUT
+
+  lint:
+    needs: infra-info
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./frontend
+
+      - name: Biome CI check
+        run: npx @biomejs/biome ci .
+        working-directory: ./frontend
+
+  typecheck:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./frontend
+
+      - name: TypeScript
+        run: npm run check-types
+        working-directory: ./frontend
+
+  build:
+    needs: [typecheck, infra-info]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./frontend
+
+      - name: Next.Js Build
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_APP_ENV: prod
+          NEXT_TELEMETRY_DISABLED: 1
+          NEXT_PUBLIC_BASE_API_URL: ${{ needs.infra-info.outputs.api_public_url }}
+          NEXT_PUBLIC_BASE_WS_URL: ${{ needs.infra-info.outputs.api_ws_public_url }}
+          NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY: ${{ needs.infra-info.outputs.api_subscription_key }}
+          NEXT_PUBLIC_COGNITO_USER_POOL_ID: ${{ needs.infra-info.outputs.cognito_user_pool_id }}
+          NEXT_PUBLIC_COGNITO_CLIENT_ID: ${{ needs.infra-info.outputs.cognito_user_pool_client_id }}
+          NEXT_PUBLIC_COGNITO_REGION: ${{ needs.infra-info.outputs.cognito_region }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build-${{ github.sha }}
+          path: ./frontend/out
+          retention-days: 2

@@ -1,0 +1,23 @@
+# ===========================================
+# VideoCore Frontend — Environment Variables
+# ===========================================
+# Copie este arquivo como .env e preencha os valores.
+
+# Ambiente (development, staging, prod)
+NEXT_PUBLIC_APP_ENV=
+
+# URL base da API REST (ex: https://your-apim.azure-api.net)
+NEXT_PUBLIC_BASE_API_URL=
+
+# URL base do WebSocket STOMP (ex: wss://your-apim.azure-api.net)
+NEXT_PUBLIC_BASE_WS_URL=
+
+# AWS Cognito
+NEXT_PUBLIC_COGNITO_USER_POOL_ID=
+NEXT_PUBLIC_COGNITO_CLIENT_ID=
+NEXT_PUBLIC_COGNITO_REGION=us-east-1
+# Apenas em DEV
+NEXT_PUBLIC_COGNITO_ENDPOINT=
+
+# Azure API Management — Subscription Key
+NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY=
