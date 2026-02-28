@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import faviconImage from "../assets/favicon.png";
 import "../styles/index.css";
-import type { StaticImageData } from "next/dist/shared/lib/image-external";
 import { AppInitializer } from "@/components/app-initializer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-
-const favicon: StaticImageData = faviconImage;
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -25,7 +21,7 @@ export const metadata: Metadata = {
 	description: "Screenshots de vídeo simplificados",
 	icons: {
 		icon: {
-			url: favicon.src,
+			url: "../assets/favicon.png",
 		},
 	},
 };
