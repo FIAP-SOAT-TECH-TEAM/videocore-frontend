@@ -80,16 +80,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: frontend/package-lock.json
+          node-version-file: ./frontend/package-lock.json
           cache: npm
 
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
+        working-directory: ./frontend
 
       - name: Biome CI check
         run: npx @biomejs/biome ci .
-        working-directory: frontend
+        working-directory: ./frontend
 
   typecheck:
     needs: lint
@@ -99,16 +99,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: frontend/package-lock.json
+          node-version-file: ./frontend/package-lock.json
           cache: npm
 
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
+        working-directory: ./frontend
 
       - name: TypeScript
         run: npm run check-types
-        working-directory: frontend
+        working-directory: ./frontend
 
   build:
     needs: [typecheck, infra-info]
@@ -118,15 +118,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: frontend/package-lock.json
+          node-version-file: ./frontend/package-lock.json
           cache: npm
 
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
+        working-directory: ./frontend
 
       - name: Next.Js Build
-        working-directory: frontend
+        working-directory: ./frontend
         run: npm run build
         env:
           NEXT_PUBLIC_APP_ENV: prod
@@ -142,5 +142,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nextjs-build-${{ github.sha }}
-          path: frontend/out
+          path: ./frontend/out
           retention-days: 2
