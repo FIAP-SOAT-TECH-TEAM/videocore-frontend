@@ -27,7 +27,6 @@ import {
 	SidebarRail,
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/stores";
-import favicon from "../app/favicon.ico";
 
 const menuItems = [
 	{
@@ -59,7 +58,7 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<div className="flex items-center gap-2 px-2 py-4">
 					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-						<Image src={favicon} alt="Video icon" width={25} height={25} className="" />
+						<Image src="/favicon.ico" alt="Video icon" width={25} height={25} className="" />
 					</div>
 					<span className="font-semibold text-lg">VideoCore</span>
 				</div>
