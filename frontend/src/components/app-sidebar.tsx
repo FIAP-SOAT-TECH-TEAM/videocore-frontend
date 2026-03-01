@@ -2,6 +2,7 @@
 
 import { Home01Icon, Logout01Icon, Video01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -57,7 +58,7 @@ export function AppSidebar() {
 			<SidebarHeader>
 				<div className="flex items-center gap-2 px-2 py-4">
 					<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-						<HugeiconsIcon icon={Video01Icon} className="h-4 w-4" />
+						<Image src="/favicon.ico" alt="Video icon" width={25} height={25} className="" />
 					</div>
 					<span className="font-semibold text-lg">VideoCore</span>
 				</div>
