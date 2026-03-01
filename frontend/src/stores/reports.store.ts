@@ -64,7 +64,9 @@ export const useReportsStore = create<ReportsStore>()((set, get) => ({
 				status,
 			};
 
-			const existingIndex = state.reports.findIndex((r) => r.requestId === payload.requestId);
+			const existingIndex = state.reports.findIndex(
+				(r) => r.requestId === payload.requestId && r.videoName === payload.videoName,
+			);
 
 			if (existingIndex >= 0) {
 				const updatedReports = [...state.reports];
