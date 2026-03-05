@@ -40,16 +40,16 @@ export default function VideoDetailsPage() {
 	const videoName = searchParams.get("videoName");
 
 	const reports = useReportsStore((state) => state.reports);
-	const fetchReports = useReportsStore((state) => state.fetchReports);
+	const fetchLastExistingReport = useReportsStore((state) => state.fetchLastExistingReport);
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const [isDownloading, setIsDownloading] = React.useState(false);
 
-	// Buscar reports se não carregado
+	// Buscar report se não carregado
 	React.useEffect(() => {
-		if (reports.length === 0) {
-			fetchReports();
+		if (reports.length === 0 && requestId && videoName) {
+			fetchLastExistingReport(requestId, videoName);
 		}
-	}, [reports.length, fetchReports]);
+	}, [requestId, videoName, reports.length, fetchLastExistingReport]);
 
 	const report = reports.find((r) => r.requestId === requestId && r.videoName === videoName);
 

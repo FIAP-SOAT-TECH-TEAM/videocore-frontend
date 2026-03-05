@@ -53,10 +53,14 @@ export async function fetchLatestReports(): Promise<Report[]> {
 }
 
 /**
- * GET /{reportId} — Retorna um reporte do usuário autenticado pelo ID
+ * GET /? — Retorna o report mais recente para o requestId e videoName fornecidos.
  */
-export async function fetchReportById(id: string): Promise<Report> {
-	return apiFetch<Report>(`/${id}`);
+export async function fetchLastExistingReport(
+	requestId: string,
+	videoName: string,
+): Promise<Report> {
+	const params = new URLSearchParams({ requestId, videoName });
+	return apiFetch<Report>(`?${params.toString()}`);
 }
 
 /**

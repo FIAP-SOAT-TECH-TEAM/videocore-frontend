@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { fetchLatestReports, fetchReportById } from "@/lib/api";
+import { fetchLastExistingReport, fetchLatestReports } from "@/lib/api";
 import type { ProcessStatus, Report, ReportPayload } from "@/types";
 
 interface ReportsState {
@@ -18,7 +18,7 @@ interface ReportsActions {
 		processing: number;
 		failed: number;
 	};
-	fetchReportById: (id: string) => Promise<void>;
+	fetchLastExistingReport: (requestId: string, videoName: string) => Promise<void>;
 }
 
 type ReportsStore = ReportsState & ReportsActions;
@@ -92,10 +92,10 @@ export const useReportsStore = create<ReportsStore>()((set, get) => ({
 		};
 	},
 
-	fetchReportById: async (id: string) => {
+	fetchLastExistingReport: async (requestId: string, videoName: string) => {
 		set({ isLoading: true, error: null });
 		try {
-			const report = await fetchReportById(id);
+			const report = await fetchLastExistingReport(requestId, videoName);
 			set((state) => {
 				const existingIndex = state.reports.findIndex((r) => r.id === report.id);
 				let updatedReports = [...state.reports];
