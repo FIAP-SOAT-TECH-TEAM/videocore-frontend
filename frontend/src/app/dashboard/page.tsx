@@ -30,20 +30,23 @@ const statusConfig: Record<
 };
 
 export default function DashboardPage() {
-	const reports = useReportsStore((state) => state.reports);
+	const fetchDashboardStats = useReportsStore((state) => state.fetchDashboardStats);
+	const fetchReports = useReportsStore((state) => state.fetchReports);
+	const currentPage = useReportsStore((state) => state.pagination.page);
+	const initialPage = 0;
+	const pageSize = 3;
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const error = useReportsStore((state) => state.error);
-	const fetchReports = useReportsStore((state) => state.fetchReports);
-	const getDashboardStats = useReportsStore((state) => state.getDashboardStats);
+	const stats = useReportsStore((state) => state.stats);
+	let reports = useReportsStore((state) => state.pagination.pageItems[initialPage]);
+
+	if (reports.length > pageSize) reports = reports.slice(0, pageSize);
 
 	useEffect(() => {
-		fetchReports();
-	}, [fetchReports]);
+		if (currentPage !== initialPage || reports.length === 0) fetchReports(initialPage, pageSize);
 
-	const stats = getDashboardStats();
-	const recentReports = reports
-		.sort((a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime())
-		.slice(0, 3);
+		fetchDashboardStats();
+	}, [currentPage, reports.length, fetchReports, fetchDashboardStats]);
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -86,7 +89,7 @@ export default function DashboardPage() {
 							<Skeleton className="h-8 w-16" />
 						) : (
 							<>
-								<div className="font-bold text-2xl">{stats.completed}</div>
+								<div className="font-bold text-2xl">{stats.byStatus.COMPLETED}</div>
 								<p className="text-muted-foreground text-xs">processamentos finalizados</p>
 							</>
 						)}
@@ -103,7 +106,7 @@ export default function DashboardPage() {
 							<Skeleton className="h-8 w-16" />
 						) : (
 							<>
-								<div className="font-bold text-2xl">{stats.processing}</div>
+								<div className="font-bold text-2xl">{stats.byStatus.PROCESSING}</div>
 								<p className="text-muted-foreground text-xs">vídeos processando</p>
 							</>
 						)}
@@ -120,7 +123,7 @@ export default function DashboardPage() {
 							<Skeleton className="h-8 w-16" />
 						) : (
 							<>
-								<div className="font-bold text-2xl">{stats.failed}</div>
+								<div className="font-bold text-2xl">{stats.byStatus.FAILED}</div>
 								<p className="text-muted-foreground text-xs">processamentos com erro</p>
 							</>
 						)}
@@ -166,7 +169,7 @@ export default function DashboardPage() {
 							</Card>
 						))}
 					</div>
-				) : recentReports.length === 0 ? (
+				) : reports.length === 0 ? (
 					<Card>
 						<CardContent className="flex flex-col items-center justify-center py-12">
 							<HugeiconsIcon icon={Video01Icon} className="mb-4 h-12 w-12 text-muted-foreground" />
@@ -176,7 +179,7 @@ export default function DashboardPage() {
 					</Card>
 				) : (
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{recentReports.map((report) => {
+						{reports.map((report) => {
 							const seeDetailsUrl: UrlObject = {
 								pathname: "/dashboard/videos/details",
 								query: {

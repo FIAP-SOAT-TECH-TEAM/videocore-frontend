@@ -39,7 +39,8 @@ export default function VideoDetailsPage() {
 	const requestId = searchParams.get("requestId");
 	const videoName = searchParams.get("videoName");
 
-	const reports = useReportsStore((state) => state.reports);
+	const currentPage = useReportsStore((state) => state.pagination.page);
+	const reports = useReportsStore((state) => state.pagination.pageItems[currentPage]);
 	const fetchLastExistingReport = useReportsStore((state) => state.fetchLastExistingReport);
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const [isDownloading, setIsDownloading] = React.useState(false);

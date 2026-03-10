@@ -1,5 +1,11 @@
 import { env } from "@/env";
-import type { Report, VideoImagesDownloadUrlResponse, VideoUploadUrlResponse } from "@/types";
+import type {
+	PaginationResponse,
+	Report,
+	ReportStatsResponse,
+	VideoImagesDownloadUrlResponse,
+	VideoUploadUrlResponse,
+} from "@/types";
 import { getAccessToken, getAuthSubject } from "./cognito";
 import { isDev } from "./utils";
 
@@ -48,8 +54,25 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
 /**
  * GET /latest — Retorna os últimos reports do usuário autenticado
  */
-export async function fetchLatestReports(): Promise<Report[]> {
-	return apiFetch<Report[]>("/latest");
+export async function fetchLatestReports(
+	page: number,
+	size: number,
+): Promise<PaginationResponse<Report>> {
+	const params = new URLSearchParams({
+		page: page.toString(),
+		size: size.toString(),
+		orderField: "reportTime",
+		orderDirection: "desc",
+	});
+
+	return apiFetch(`/latest?${params.toString()}`);
+}
+
+/**
+ * GET /stats — Retorna estatísticas para o dashboard (total de vídeos, quantidade por status, etc)
+ */
+export async function fetchStats(): Promise<ReportStatsResponse> {
+	return apiFetch("/stats");
 }
 
 /**

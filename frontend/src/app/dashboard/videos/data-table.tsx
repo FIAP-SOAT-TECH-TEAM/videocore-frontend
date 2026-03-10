@@ -10,13 +10,12 @@ import {
 	getFacetedRowModel,
 	getFacetedUniqueValues,
 	getFilteredRowModel,
-	getPaginationRowModel,
 	getSortedRowModel,
 	type SortingState,
 	useReactTable,
 	type VisibilityState,
 } from "@tanstack/react-table";
-import * as React from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,19 +33,27 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import type { Pagination } from "@/types";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	pagination: Pagination;
+	setPage: Dispatch<SetStateAction<number>>;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-	const [rowSelection, setRowSelection] = React.useState({});
-	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [globalFilter, setGlobalFilter] = React.useState("");
-	const [statusFilter, setStatusFilter] = React.useState<string | null>("all");
+export function DataTable<TData, TValue>({
+	columns,
+	data,
+	pagination,
+	setPage,
+}: DataTableProps<TData, TValue>) {
+	const [rowSelection, setRowSelection] = useState({});
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [globalFilter, setGlobalFilter] = useState("");
+	const [statusFilter, setStatusFilter] = useState<string | null>("all");
 
 	const table = useReactTable({
 		data,
@@ -60,10 +67,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		},
 		initialState: {
 			pagination: {
-				pageSize: 10,
+				pageSize: pagination.size,
 			},
 		},
 		enableRowSelection: true,
+		manualPagination: true,
+		pageCount: pagination.totalPages,
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -71,7 +80,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 		onGlobalFilterChange: setGlobalFilter,
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFacetedRowModel: getFacetedRowModel(),
 		getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -173,19 +181,19 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
+						onClick={() => setPage((prev) => prev - 1)}
+						disabled={!pagination.hasPrevious}
 					>
 						Anterior
 					</Button>
 					<div className="text-muted-foreground text-sm">
-						Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+						Página {pagination.page + 1} de {pagination.totalPages}
 					</div>
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
+						onClick={() => setPage((prev) => prev + 1)}
+						disabled={!pagination.hasNext}
 					>
 						Próxima
 					</Button>

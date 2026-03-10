@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UploadModal } from "@/components/upload-modal";
@@ -9,17 +9,16 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 export default function VideosPage() {
-	const reports = useReportsStore((state) => state.reports).sort(
-		(a, b) => new Date(b.reportTime).getTime() - new Date(a.reportTime).getTime(),
-	);
-
+	const fetchReports = useReportsStore((state) => state.fetchReports);
+	const [page, setPage] = useState(0);
+	const reports = useReportsStore((state) => state.pagination.pageItems[page]);
 	const isLoading = useReportsStore((state) => state.isLoading);
 	const error = useReportsStore((state) => state.error);
-	const fetchReports = useReportsStore((state) => state.fetchReports);
+	const pagination = useReportsStore((state) => state.pagination);
 
 	useEffect(() => {
-		fetchReports();
-	}, [fetchReports]);
+		fetchReports(page, 5);
+	}, [page, fetchReports]);
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -48,7 +47,7 @@ export default function VideosPage() {
 					<Skeleton className="h-64 w-full" />
 				</div>
 			) : (
-				<DataTable columns={columns} data={reports} />
+				<DataTable columns={columns} data={reports} pagination={pagination} setPage={setPage} />
 			)}
 		</div>
 	);

@@ -47,3 +47,41 @@ export interface User {
 	name: string;
 	avatarUrl?: string;
 }
+
+// Resposta de paginação genérica (alinhada com PaginationResponse do backend)
+export type PaginationResponse<T> = {
+	content: T[];
+} & Pagination;
+
+// Resposta de paginação genérica (alinhada com PaginationResponse do backend)
+export type PaginationState<T> = {
+	pageItems: Record<number, T[]>;
+} & Pagination;
+
+// Metadados de paginação para frontend
+export interface Pagination {
+	page: number;
+	size: number;
+	totalElements: number;
+	totalPages: number;
+	hasPrevious: boolean;
+	hasNext: boolean;
+}
+
+// Estatísticas de reports para dashboard
+export interface ReportStats {
+	total: number;
+	byStatus: {
+		PROCESSING: number;
+		COMPLETED: number;
+		FAILED: number;
+	};
+}
+
+// Resposta de GET /stats (alinhada com ReportStatsResponse do backend)
+export interface ReportStatsResponse {
+	total: number;
+	completed: number;
+	processing: number;
+	failed: number;
+}
