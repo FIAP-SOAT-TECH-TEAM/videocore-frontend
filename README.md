@@ -16,6 +16,8 @@ Interface web para upload de vídeos e extração de screenshots do ecossistema 
   <a href="#contribuicao">Contribuição</a>
 </div><br>
 
+> 📽️ Vídeo de demonstração da arquitetura: [https://youtu.be/k3XbPRxmjCw](https://youtu.be/k3XbPRxmjCw)<br>
+
 ---
 
 <h2 id="visao-geral">📋 Visão Geral</h2>
@@ -213,6 +215,72 @@ npm install
 
 # Executar em modo de desenvolvimento
 npm run dev
+```
+
+> ⚠️ Ajuste os arquivos `.env` conforme necessário.
+
+---
+
+<h2 id="deploy">⚙️ Fluxo de Deploy</h2>
+
+<details>
+<summary>Expandir para mais detalhes</summary>
+
+### Pipeline
+
+1. **Pull Request** → CI: Lint (Biome), Typecheck, Terraform Plan
+2. **Revisão e Aprovação** → Mínimo 1 aprovação de CODEOWNER
+3. **Merge para Main** → CD: Build estático + Deploy CloudFront
+
+### Autenticação
+
+- **OIDC**: Token emitido pelo GitHub
+- **Azure AD Federation**: Confia no emissor GitHub
+- **Service Principal**: Autentica sem secret
+
+### Ordem de Provisionamento
+
+```
+1. videocore-infra          (AKS, VNET, APIM)
+2. videocore-db             (Cosmos DB)
+3. videocore-auth           (Azure Function Authorizer)
+4. videocore-reports        (Microsserviço de relatórios)
+5. videocore-worker         (Microsserviço de processamento)
+6. videocore-notification   (Microsserviço de notificações)
+7. videocore-frontend       (Interface web - este repositório)
+```
+
+### Proteções
+
+- Branch `main` protegida
+- Nenhum push direto permitido
+- Todos os checks devem passar
+
+</details>
+
+---
+
+<h2 id="contribuicao">🤝 Contribuição</h2>
+
+### Fluxo de Contribuição
+
+1. Crie uma branch a partir de `main`
+2. Implemente suas alterações
+3. Execute o lint: `npx biome check`
+4. Execute o typecheck: `npx tsc --noEmit`
+5. Abra um Pull Request
+6. Aguarde aprovação de um CODEOWNER
+
+### Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
+
+---
+
+<div align="center">
+  <strong>FIAP - Pós-graduação em Arquitetura de Software</strong><br>
+  Tech Challenge 4
+</div>
 
 # Build estático
 npm run build
