@@ -8,11 +8,14 @@ Interface web para upload de vídeos e extração de screenshots do ecossistema 
 
 <div align="center">
   <a href="#visao-geral">Visão Geral</a> •
-  <a href="#arquitetura">Arquitetura</a> •
   <a href="#repositorios">Repositórios</a> •
   <a href="#tecnologias">Tecnologias</a> •
-  <a href="#instalacao">Instalação</a> •
+  <a href="#estrutura">Estrutura</a> •
+  <a href="#terraform">Terraform</a> •
+  <a href="#arquitetura">Arquitetura</a> •
+  <a href="#dbtecnicos">Débitos Técnicos</a> •
   <a href="#deploy">Fluxo de Deploy</a> •
+  <a href="#instalacao">Instalação</a> •
   <a href="#contribuicao">Contribuição</a>
 </div><br>
 
@@ -21,6 +24,9 @@ Interface web para upload de vídeos e extração de screenshots do ecossistema 
 ---
 
 <h2 id="visao-geral">📋 Visão Geral</h2>
+
+<details>
+<summary>Expandir para mais detalhes</summary>
 
 O **VideoCore Frontend** é uma aplicação **Next.js** (Static Export) que permite aos usuários fazer upload de vídeos, acompanhar o processamento em tempo real via WebSocket e baixar os screenshots extraídos.
 
@@ -41,58 +47,60 @@ O **VideoCore Frontend** é uma aplicação **Next.js** (Static Export) que perm
 4. **Visualização** dos screenshots extraídos no dashboard
 5. **Download** dos arquivos processados
 
+</details>
+
 ---
 
-<h2 id="arquitetura">🧱 Arquitetura</h2>
+<h2 id="repositorios">📁 Repositórios do Ecossistema</h2>
 
 <details>
 <summary>Expandir para mais detalhes</summary>
 
-### 🎯 Padrões e Decisões Arquiteturais
+| Repositório | Responsabilidade | Tecnologias |
+|-------------|------------------|-------------|
+| **videocore-infra** | Infraestrutura base | Terraform, Azure, AWS |
+| **videocore-db** | Banco de dados | Terraform, Azure Cosmos DB |
+| **videocore-auth** | Microsserviço de autenticação | C#, .NET 9, ASP.NET |
+| **videocore-reports** | Microsserviço de relatórios | Java 25, GraalVM, Spring Boot 4, Cosmos DB |
+| **videocore-worker** | Microsserviço de processamento de vídeo | Java 25, GraalVM, Spring Boot 4, FFmpeg |
+| **videocore-notification** | Microsserviço de notificações | Java 25, GraalVM, Spring Boot 4, SMTP |
+| **videocore-frontend** | Interface web do usuário | Next.js 16, React 19, TypeScript |
 
-- **Static Export**: Build estático para deploy em Azure Static Website
-- **Trailing Slash**: Compatibilidade com Azure Static Website routing
-- **Client-Side Rendering**: Toda renderização ocorre no navegador
-- **State Management**: Zustand com persistência para dados de autenticação
+</details>
 
-### 🔐 Autenticação
+---
 
-```
-Usuário → Cognito (Sign Up / Sign In)
-              ↓
-         AWS Amplify (Session)
-              ↓
-         Bearer Token → API (APIM)
-              ↓
-         Auth-Subject Header (Dev mode)
-```
+<h2 id="tecnologias">🔧 Tecnologias</h2>
 
-- **AWS Cognito**: User Pool para gerenciamento de identidade
-- **AWS Amplify**: SDK para integração com Cognito
-- **Zustand**: Persistência de sessão no client-side
+<details>
+<summary>Expandir para mais detalhes</summary>
 
-### 🔄 Comunicação em Tempo Real
+| Categoria | Tecnologia |
+|-----------|------------|
+| **Framework** | Next.js 16.1.1 |
+| **UI** | React 19.2.3 |
+| **Linguagem** | TypeScript |
+| **Estilização** | Tailwind CSS v4, shadcn/ui |
+| **Autenticação** | AWS Amplify, AWS Cognito |
+| **Estado** | Zustand |
+| **WebSocket** | @stomp/stompjs |
+| **Formulários** | React Hook Form, Zod |
+| **Tabelas** | TanStack React Table |
+| **Linting** | Biome |
+| **Deploy** | Azure Static Website, CloudFront CDN |
+| **IaC** | Terraform |
+| **CI/CD** | GitHub Actions |
 
-```
-Frontend ←→ STOMP (WebSocket) ←→ Reports Service
-              ↓
-         /topic (subscribe)
-              ↓
-         ReportPayload (status updates)
-```
+</details>
 
-### 🌐 API Endpoints
+---
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/latest` | Relatórios mais recentes do usuário |
-| `GET` | `/{reportId}` | Relatório específico por ID |
-| `GET` | `/video/download/url` | SAS URL para download de imagens |
-| `GET` | `/video/upload/url` | SAS URL para upload de vídeo |
+<h2 id="estrutura">📦 Estrutura do Projeto</h2>
 
-### 📦 Estrutura do Projeto
+<details>
+<summary>Expandir para mais detalhes</summary>
 
-```
+```text
 videocore-frontend/
 ├── frontend/
 │   ├── package.json          # Dependências (Next.js 16, React 19)
@@ -128,10 +136,79 @@ videocore-frontend/
 │   ├── datasource.tf         # Data sources
 │   ├── variables.tf          # Variáveis
 │   └── outputs.tf            # Outputs (CDN URL)
+├── docs/                     # Assets de documentação
 └── .github/workflows/
     ├── ci.yaml               # Lint, typecheck, Terraform plan
     └── cd.yaml               # Build + deploy CloudFront
 ```
+
+</details>
+
+---
+
+<h2 id="terraform">🗄️ Módulos Terraform</h2>
+
+<details>
+<summary>Expandir para mais detalhes</summary>
+
+O código `HCL` desenvolvido segue uma estrutura modular:
+
+| Módulo | Descrição |
+|--------|-----------|
+| **main** | Módulo principal para criação de outputs |
+
+> ⚠️ Os outpus criados são consumidos posteriormente em pipelines via `$GITHUB_OUTPUT` ou `Terraform Remote State`, para compartilhamento de informações. Tornando, desta forma, dinãmico o provisionamento da infraestrutura.
+
+</details>
+
+---
+
+<h2 id="arquitetura">🧱 Arquitetura</h2>
+
+<details>
+<summary>Expandir para mais detalhes</summary>
+
+### 🎯 Padrões e Decisões Arquiteturais
+
+- **Static Export**: Build estático para deploy em Azure Static Website
+- **Trailing Slash**: Compatibilidade com Azure Static Website routing
+- **Client-Side Rendering**: Toda renderização ocorre no navegador
+- **State Management**: Zustand com persistência para dados de autenticação
+
+### 🔐 Autenticação
+
+```text
+Usuário → Cognito (Sign Up / Sign In)
+              ↓
+         AWS Amplify (Session)
+              ↓
+         Bearer Token → API (APIM)
+              ↓
+         Auth-Subject Header (Dev mode)
+```
+
+- **AWS Cognito**: User Pool para gerenciamento de identidade
+- **AWS Amplify**: SDK para integração com Cognito
+- **Zustand**: Persistência de sessão no client-side
+
+### 🔄 Comunicação em Tempo Real
+
+```text
+Frontend ←→ STOMP (WebSocket) ←→ Reports Service
+              ↓
+         /topic (subscribe)
+              ↓
+         ReportPayload (status updates)
+```
+
+### 🌐 API Endpoints
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/latest` | Relatórios mais recentes do usuário |
+| `GET` | `/{reportId}` | Relatório específico por ID |
+| `GET` | `/video/download/url` | SAS URL para download de imagens |
+| `GET` | `/video/upload/url` | SAS URL para upload de vídeo |
 
 ### 📊 Stores (Zustand)
 
@@ -153,52 +230,67 @@ videocore-frontend/
 
 ---
 
-<h2 id="repositorios">📁 Repositórios do Ecossistema</h2>
+<h2 id="dbtecnicos">⚠️ Débitos Técnicos</h2>
 
-| Repositório | Responsabilidade | Tecnologias |
-|-------------|------------------|-------------|
-| **videocore-infra** | Infraestrutura base (AKS, VNET, APIM, Key Vault) | Terraform, Azure, AWS |
-| **videocore-db** | Banco de dados | Terraform, Azure Cosmos DB |
-| **videocore-frontend** | Interface web (este repositório) | Next.js 16, React 19, TypeScript |
-| **videocore-reports** | Microsserviço de relatórios | Java 25, Spring Boot 4, Cosmos DB |
-| **videocore-worker** | Microsserviço de processamento de vídeo | Java 25, Spring Boot 4, FFmpeg |
-| **videocore-observability** | Stack de observabilidade | OpenTelemetry, Jaeger, Prometheus, Grafana |
+<details>
+<summary>Expandir para mais detalhes</summary>
+
+| Débito | Descrição | Impacto |
+|--------|-----------|---------|
+| **JWT Cognito** | Implementar a persistência do `Token JWT` retornado pelo `Cognito` em um Cookie `HTTP Only`, ao invés do `Local Storage` | Segurança crítica |
+| **Token ANTI-CSRF** | Uma vez que o Cookie `HTTP Only` que armazenará o `Token JWT` do `Cognito` deverá poder ser compartilhado com um domínio diferente da aplicação, implementar o uso de Tokens `ANTI-CSRF` para impedir ataques `CSRF` | Segurança crítica |
+| **Observabilidade** | Instrumentar a aplicação para que gere `TraceIds` que possam ser propagados ao backend nas requisições, para que o `New Relic` consiga correlacionar `Frontend` e `Backend` | Clareza no monitoramento |
+| **Auth AWS (OIDC)** | Autenticar pipelines utilizando Tokens OIDC ao invés de credenciais estáticas | Segurança e gestão de credenciais |
+
+</details>
 
 ---
 
-<h2 id="tecnologias">🔧 Tecnologias</h2>
+<h2 id="deploy">⚙️ Fluxo de Deploy</h2>
 
-| Categoria | Tecnologia |
-|-----------|------------|
-| **Framework** | Next.js 16.1.1 |
-| **UI** | React 19.2.3 |
-| **Linguagem** | TypeScript |
-| **Estilização** | Tailwind CSS v4, shadcn/ui |
-| **Autenticação** | AWS Amplify, AWS Cognito |
-| **Estado** | Zustand |
-| **WebSocket** | @stomp/stompjs |
-| **Formulários** | React Hook Form, Zod |
-| **Tabelas** | TanStack React Table |
-| **Linting** | Biome |
-| **Deploy** | Azure Static Website, CloudFront CDN |
-| **IaC** | Terraform |
-| **CI/CD** | GitHub Actions |
+<details>
+<summary>Expandir para mais detalhes</summary>
+
+### Pipeline
+
+1. **Pull Request** → CI: Lint (Biome), Typecheck, Terraform Plan
+2. **Revisão e Aprovação** → Mínimo 1 aprovação de CODEOWNER
+3. **Merge para Main** → CD: Build estático + Deploy CloudFront
+
+### Autenticação das Pipelines
+
+- **Azure:**
+  - **OIDC**: Token emitido pelo GitHub
+  - **Azure AD Federation**: Confia no emissor GitHub
+  - **Service Principal**: Autentica sem secret
+- **AWS**: diretamente via `Access Key` e `Secret Key` (Chaves de acesso)
+
+### Ordem de Provisionamento
+
+```text
+1. videocore-infra          (AKS, VNET, APIM, etc)
+2. videocore-db             (Cosmos DB)
+3. videocore-auth           (Microsserviço de autenticação)
+4. videocore-reports        (Microsserviço de relatórios)
+5. videocore-worker         (Microsserviço de processamento)
+6. videocore-notification   (Microsserviço de notificações)
+7. videocore-frontend       (Aplicação SPA Web)
+```
+
+### Proteções
+
+- Branch `main` protegida
+- Nenhum push direto permitido
+- Todos os checks devem passar
+
+</details>
 
 ---
 
 <h2 id="instalacao">🚀 Instalação e Uso</h2>
 
-### Variáveis de Ambiente
-
-```bash
-NEXT_PUBLIC_BASE_API_URL=         # URL base da API (HTTP/HTTPS)
-NEXT_PUBLIC_BASE_WS_URL=          # URL base do WebSocket (WS/WSS)
-NEXT_PUBLIC_COGNITO_USER_POOL_ID= # AWS Cognito User Pool ID
-NEXT_PUBLIC_COGNITO_CLIENT_ID=    # Cognito App Client ID
-NEXT_PUBLIC_COGNITO_REGION=       # Região AWS (default: us-east-1)
-NEXT_PUBLIC_COGNITO_ENDPOINT=     # Endpoint local do Cognito (opcional)
-NEXT_PUBLIC_APIM_SUBSCRIPTION_KEY= # Chave de assinatura do APIM (opcional)
-```
+<details>
+<summary>Expandir para mais detalhes</summary>
 
 ### Desenvolvimento Local
 
@@ -219,48 +311,14 @@ npm run dev
 
 > ⚠️ Ajuste os arquivos `.env` conforme necessário.
 
----
-
-<h2 id="deploy">⚙️ Fluxo de Deploy</h2>
-
-<details>
-<summary>Expandir para mais detalhes</summary>
-
-### Pipeline
-
-1. **Pull Request** → CI: Lint (Biome), Typecheck, Terraform Plan
-2. **Revisão e Aprovação** → Mínimo 1 aprovação de CODEOWNER
-3. **Merge para Main** → CD: Build estático + Deploy CloudFront
-
-### Autenticação
-
-- **OIDC**: Token emitido pelo GitHub
-- **Azure AD Federation**: Confia no emissor GitHub
-- **Service Principal**: Autentica sem secret
-
-### Ordem de Provisionamento
-
-```
-1. videocore-infra          (AKS, VNET, APIM)
-2. videocore-db             (Cosmos DB)
-3. videocore-auth           (Azure Function Authorizer)
-4. videocore-reports        (Microsserviço de relatórios)
-5. videocore-worker         (Microsserviço de processamento)
-6. videocore-notification   (Microsserviço de notificações)
-7. videocore-frontend       (Interface web - este repositório)
-```
-
-### Proteções
-
-- Branch `main` protegida
-- Nenhum push direto permitido
-- Todos os checks devem passar
-
 </details>
 
 ---
 
 <h2 id="contribuicao">🤝 Contribuição</h2>
+
+<details>
+<summary>Expandir para mais detalhes</summary>
 
 ### Fluxo de Contribuição
 
@@ -273,79 +331,13 @@ npm run dev
 
 ### Licença
 
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
----
-
-<div align="center">
-  <strong>FIAP - Pós-graduação em Arquitetura de Software</strong><br>
-  Tech Challenge 4
-</div>
-
-# Build estático
-npm run build
-
-# Lint
-npm run lint
-```
-
----
-
-<h2 id="deploy">⚙️ Fluxo de Deploy</h2>
-
-<details>
-<summary>Expandir para mais detalhes</summary>
-
-### Pipeline CI
-
-1. **Terraform**: Format, validate e plan
-2. **Lint**: Verificação com Biome
-3. **TypeScript**: Type checking
-
-### Pipeline CD
-
-1. **Build**: `npm run build` (static export)
-2. **Upload**: Artefatos para Azure Storage Account
-3. **CDN**: Distribuição via CloudFront
-
-### Proteções
-
-- Branch `main` protegida
-- Nenhum push direto permitido
-- Todos os checks devem passar
-
-### Ordem de Provisionamento
-
-```
-1. videocore-infra          (AKS, VNET, APIM, Key Vault)
-2. videocore-db             (Cosmos DB)
-3. videocore-observability  (Jaeger, Prometheus, Grafana)
-4. videocore-reports        (Microsserviço de relatórios)
-5. videocore-worker         (Microsserviço de processamento)
-6. videocore-frontend       (Interface web - este repositório)
-```
+Este projeto está licenciado sob a MIT License.
 
 </details>
 
 ---
 
-<h2 id="contribuicao">🤝 Contribuição</h2>
-
-### Fluxo de Contribuição
-
-1. Crie uma branch a partir de `main`
-2. Implemente suas alterações
-3. Execute o lint: `npm run lint`
-4. Abra um Pull Request
-5. Aguarde aprovação de um CODEOWNER
-
-### Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
----
-
 <div align="center">
   <strong>FIAP - Pós-graduação em Arquitetura de Software</strong><br>
-  Tech Challenge
+  Hackaton (Tech Challenge 5)
 </div>
