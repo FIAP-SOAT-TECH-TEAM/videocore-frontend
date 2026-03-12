@@ -14,6 +14,7 @@ import { type RegisterFormValues, registerSchema } from "../schemas/register";
 import { ConfirmOtpModal, type PendingConfirmation } from "./confirm-otp-modal";
 
 export function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
+	const [isLoading, setIsLoading] = React.useState(false);
 	const [pendingConfirmation, setPendingConfirmation] = React.useState<PendingConfirmation | null>(
 		null,
 	);
@@ -32,6 +33,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
 
 	async function onSubmit(data: RegisterFormValues) {
 		try {
+			setIsLoading(true);
 			const result = await cognitoSignUp(data);
 
 			if (result.nextStep.signUpStep === "CONFIRM_SIGN_UP") {
@@ -44,6 +46,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
 			}
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Erro ao criar conta.");
+		} finally {
+			setIsLoading(false);
 		}
 	}
 
@@ -164,8 +168,8 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
 					/>
 
 					<Field>
-						<Button type="submit" className="w-full">
-							Solicitar Acesso
+						<Button type="submit" className="w-full" disabled={isLoading}>
+							{isLoading ? "Criando conta..." : "Criar Conta"}
 						</Button>
 						<FieldDescription className="text-center">
 							Já possui uma conta?{" "}

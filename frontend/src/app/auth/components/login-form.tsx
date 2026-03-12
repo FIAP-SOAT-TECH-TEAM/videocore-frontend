@@ -39,7 +39,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
 
 			if (message.includes("NotAuthorizedException") || message.includes("Incorrect")) {
 				toast.error("Nome de usuário ou senha incorretos.");
-			} else if (message.includes("UserNotFoundException")) {
+			} else if (
+				message.includes("UserNotFoundException") ||
+				message.includes("User does not exist")
+			) {
 				toast.error("Usuário não encontrado.");
 			} else if (message.includes("UNCONFIRMED")) {
 				try {
