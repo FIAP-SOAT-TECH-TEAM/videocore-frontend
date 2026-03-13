@@ -187,7 +187,8 @@ export function DataTable<TData, TValue>({
 						Anterior
 					</Button>
 					<div className="text-muted-foreground text-sm">
-						Página {pagination.page + 1} de {pagination.totalPages}
+						Página {pagination.totalElements > 0 ? pagination.page + 1 : 0} de{" "}
+						{pagination.totalPages}
 					</div>
 					<Button
 						variant="outline"
