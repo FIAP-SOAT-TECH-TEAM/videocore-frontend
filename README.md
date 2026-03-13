@@ -2,7 +2,7 @@
 
 <div align="center">
 
-Interface web para upload de vídeos e extração de screenshots do ecossistema VideoCore. Desenvolvida como parte do curso de Arquitetura de Software da FIAP (Tech Challenge).
+Interface web para upload de vídeos e extração de screenshots do ecossistema VideoCore. Desenvolvida como parte do curso de Arquitetura de Software da FIAP (Hackaton).
 
 </div>
 
