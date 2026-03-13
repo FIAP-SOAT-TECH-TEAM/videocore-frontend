@@ -19,7 +19,7 @@ Interface web para upload de vídeos e extração de screenshots do ecossistema 
   <a href="#contribuicao">Contribuição</a>
 </div><br>
 
-> 📽️ Vídeo de demonstração da arquitetura: [https://youtu.be/k3XbPRxmjCw](https://youtu.be/k3XbPRxmjCw)<br>
+> 📽️ Vídeo de demonstração da arquitetura: [https://www.youtube.com/watch?v=axKA66ruEpM](https://www.youtube.com/watch?v=axKA66ruEpM)<br>
 
 ---
 
